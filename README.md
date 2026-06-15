@@ -1,6 +1,6 @@
 # auto-docs
 
-An agent skill that generate beautiful documentation for your project. 
+Generate beautiful documentation with AI agent skill.
 
 ## Installation
 
