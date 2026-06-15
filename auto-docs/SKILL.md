@@ -2,8 +2,8 @@
 name: auto-docs
 description: |
   Generates and manages Fumadocs-powered documentation for existing coding projects.
-  Use when user says "setup docs", "setup auto-docs", "update docs", "add docs [topic]",
-  "preview docs", or asks to generate, create, or update documentation for their project.
+  Use when user says "setup docs", "setup auto-docs", "preview docs", or asks to
+  generate, create, update, or add pages to their project documentation.
 license: MIT
 compatibility: Requires Node.js 18+. Works with Claude Code and Claude.ai. Project must have a package.json or identifiable source directory.
 metadata:
@@ -15,22 +15,20 @@ metadata:
 
 Generates and manages [Fumadocs](https://fumadocs.vercel.app)-powered documentation for existing coding projects.
 
-Creates two things inside the project:
-- `docs/` — MDX content, user-owned, always git tracked
-- `.auto-docs/` — Fumadocs infra (Next.js app), tracked or gitignored per user choice
+`docs/` is a single site covering the **entire project**. There is no per-feature or per-module docs — everything lives together. `preview docs` shows the full site.
 
 ## Project Layout
 
 ```
 <project-root>/
 ├── src/                        # user's source code
-├── docs/                       # MDX content — user-owned, git tracked
+├── docs/                       # MDX content — user-owned, always git tracked
 │   ├── meta.json
 │   ├── index.mdx
 │   ├── getting-started.mdx
-│   └── <module>/
+│   └── <section>/
 │       └── index.mdx
-└── .auto-docs/                 # Fumadocs infra
+└── .auto-docs/                 # Fumadocs infra — tracked or gitignored per user choice
     ├── package.json
     ├── next.config.mjs
     ├── source.config.ts        # dir: '../docs'
@@ -51,14 +49,14 @@ Creates two things inside the project:
 
 ### `setup docs`
 
-Detect project state first, then act:
+One command. Detects project state and acts accordingly.
 
 | State | `docs/` | `.auto-docs/` | Action |
 |-------|---------|---------------|--------|
 | Fresh project | ❌ | ❌ | Scaffold `.auto-docs/` → install deps → analyze codebase → generate `docs/` → ask gitignore |
 | Cloned, `.auto-docs/` tracked | ✅ | ✅ | `npm install` inside `.auto-docs/` only |
 | Cloned, `.auto-docs/` gitignored | ✅ | ❌ | Scaffold `.auto-docs/` → `npm install` → skip content gen |
-| Weird state | ❌ | ✅ | Warn: "docs/ missing. Run `update docs` to regenerate content." |
+| Weird state | ❌ | ✅ | Warn user: "`docs/` missing. Ask me to regenerate the docs." |
 
 #### Fresh Project Flow
 
@@ -66,15 +64,15 @@ Detect project state first, then act:
 2. Create `.auto-docs/` with all files from **File Templates** section
 3. Run `cd .auto-docs && npm install`
 4. Analyze codebase — see **Codebase Analysis** section
-5. Generate `docs/` MDX files — see **MDX Generation** section
+5. Generate full `docs/` site — see **MDX Generation** section
 6. Ask user:
    ```
    Track .auto-docs/ in git or gitignore it?
 
-   [1] Track  — teammates run 'setup docs' to install deps, infra in repo
+   [1] Track  — teammates run 'setup docs' to install deps, infra stays in repo
    [2] Ignore — smaller repo, teammates scaffold .auto-docs/ on first setup
    ```
-7. Always append to `.gitignore` (regardless of choice):
+7. Always append to `.gitignore` regardless of choice:
    ```gitignore
    # auto-docs build artifacts
    .auto-docs/node_modules
@@ -83,28 +81,9 @@ Detect project state first, then act:
    ```
 8. If user picks **Ignore**, also append:
    ```gitignore
-   # auto-docs infra (teammates run 'setup docs' to regenerate)
+   # auto-docs infra (run 'setup docs' to regenerate)
    .auto-docs/
    ```
-
----
-
-### `update docs`
-
-1. Identify changed source files — use `git diff --name-only HEAD` or scan `src/` modification times
-2. Map changed files to affected doc pages
-3. Re-analyze changed modules only
-4. Update corresponding MDX pages in `docs/`
-5. If new modules detected, generate new MDX pages and update `docs/meta.json`
-
----
-
-### `add docs [topic]`
-
-1. Search `src/` for module, file, or feature matching `[topic]`
-2. Analyze that specific module/feature
-3. Generate a single focused MDX page
-4. Add entry to `docs/meta.json` in appropriate position
 
 ---
 
@@ -114,41 +93,62 @@ Detect project state first, then act:
 cd .auto-docs && npm run dev
 ```
 
-Dev server runs at `http://localhost:3000/docs`
+Starts Fumadocs dev server at `http://localhost:3000/docs`. Shows the full project docs site.
+
+---
+
+## Editing Docs
+
+All other doc work is free-form natural language. No explicit commands needed.
+
+Examples of what users might say — and what to do:
+
+| User says | Action |
+|-----------|--------|
+| "add a page about authentication" | Create `docs/authentication.mdx`, add to `docs/meta.json` |
+| "create a new page for the payments flow" | Create `docs/payments.mdx`, add to `docs/meta.json` |
+| "update the getting-started page" | Read `docs/getting-started.mdx`, edit in place |
+| "my API changed, update the docs" | `git diff --name-only HEAD` → identify affected pages → update them |
+| "add a rate limiting section to the API page" | Read relevant MDX file, append section |
+| "remove the legacy section from configuration" | Read file, remove that section |
+
+**Always before editing:**
+1. Read the existing MDX file if it exists
+2. Identify which `docs/meta.json` entries are affected
+3. Update `docs/meta.json` if pages are added or removed
 
 ---
 
 ## Codebase Analysis
 
-Before generating MDX, analyze the project to understand what to document.
+Run during `setup docs` on a fresh project to understand what to document.
 
 **Step 1 — Read `package.json`:**
 - Project name and description
 - Framework: Next.js, Express, NestJS, Fastify, Vite, etc.
 - Language: TypeScript or JavaScript
-- Key dependencies that affect documentation structure
+- Key dependencies that shape doc structure
 
 **Step 2 — Read `README.md`:**
 - Project purpose and overview
-- Install steps
-- Usage examples
-- Any existing feature list
+- Install and run steps
+- Usage examples and feature list
 
 **Step 3 — Scan source directory:**
-- Identify top-level modules (`src/`, `app/`, `lib/`, `packages/`)
-- List major features/subsystems from folder names and file names
-- Check for route files, controller files, exported functions
+- Top-level modules under `src/`, `app/`, `lib/`, `packages/`
+- Route files, controller files, exported functions
+- Config files (`.env.example`, config schemas)
 
-**Step 4 — Detect project type and adapt docs structure:**
+**Step 4 — Detect project type, adapt doc structure:**
 
-| Project Type | Detection | Docs Structure |
-|-------------|-----------|----------------|
+| Project Type | Detection | Doc Structure |
+|-------------|-----------|---------------|
 | Next.js app | `next` in deps | pages, API routes, components |
 | Express/Fastify | `express`/`fastify` in deps | routes, middleware, controllers |
 | NestJS | `@nestjs/core` in deps | modules, controllers, services |
-| Library/SDK | no framework, has `main`/`exports` in package.json | public API, exports, types |
+| Library/SDK | `main`/`exports` in package.json, no framework | public API, exports, types |
 | CLI tool | `bin` field in package.json | commands, flags, config |
-| Monorepo | `workspaces` in package.json or `packages/` dir | per-package docs |
+| Monorepo | `workspaces` in package.json or `packages/` dir | per-package sections |
 
 ---
 
@@ -162,8 +162,8 @@ Before generating MDX, analyze the project to understand what to document.
   "pages": [
     "index",
     "getting-started",
-    "<module-1>",
-    "<module-2>"
+    "<section-1>",
+    "<section-2>"
   ]
 }
 ```
@@ -232,17 +232,17 @@ description: Install and run <ProjectName>
 <start/dev command from package.json scripts>
 ```
 
-### `docs/<module>/index.mdx` (per module)
+### `docs/<section>/index.mdx`
 
 ```mdx
 ---
-title: <ModuleName>
-description: <what this module does>
+title: <SectionName>
+description: <what this covers>
 ---
 
 ## Overview
 
-<what this module/feature does>
+<what this section covers>
 
 ## Usage
 
@@ -476,4 +476,4 @@ export const source = loader({
 → Run `cd .auto-docs && npx next build` to surface full error with line numbers
 
 **TypeScript errors on `@/.source`**
-→ Run `cd .auto-docs && npm run dev` once — Next.js generates the `.source` types on first run
+→ Run `cd .auto-docs && npm run dev` once — Next.js generates `.source` types on first run

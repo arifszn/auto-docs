@@ -4,7 +4,7 @@ A Claude skill that generates and manages [Fumadocs](https://fumadocs.vercel.app
 
 ## What it does
 
-Point Claude at any coding project and say `setup docs` — auto-docs analyzes your codebase, scaffolds a Fumadocs site, and generates MDX documentation. No manual setup required.
+Say `setup docs` — auto-docs analyzes your codebase, scaffolds a Fumadocs site, and generates a complete documentation site covering your entire project.
 
 **Two folders, clean separation:**
 
@@ -17,20 +17,26 @@ your-project/
 
 ## Commands
 
-| Command | What it does |
-|---------|-------------|
-| `setup docs` | Smart setup — detects project state, scaffolds infra, generates docs |
-| `update docs` | Re-analyzes changed files, updates stale pages only |
-| `add docs [topic]` | Generates a single doc page for a specific module or feature |
-| `preview docs` | Runs Fumadocs dev server at `http://localhost:3000/docs` |
+| What you say | What happens |
+|-------------|-------------|
+| `setup docs` | Detects project state, scaffolds infra if needed, generates full docs site |
+| `preview docs` | Starts Fumadocs dev server at `http://localhost:3000/docs` |
 
-### `setup docs` is smart
+Everything else is natural language:
 
-It detects your project state automatically:
+- "add a page about authentication"
+- "create a new page for the payments flow"
+- "update the getting-started page"
+- "my API changed, update the docs"
+- "add a rate limiting section to the API page"
+
+## `setup docs` is smart
+
+Detects your state automatically:
 
 - **Fresh project** → scaffolds `.auto-docs/`, installs deps, analyzes codebase, generates `docs/`
 - **Cloned with `.auto-docs/` tracked** → runs `npm install` only
-- **Cloned without `.auto-docs/`** → scaffolds infra, installs deps, skips content gen
+- **Cloned without `.auto-docs/`** → scaffolds infra, installs deps, leaves `docs/` untouched
 
 On first run it asks whether to track `.auto-docs/` in git or gitignore it.
 
@@ -50,34 +56,6 @@ rm -rf /tmp/auto-docs-repo
 2. Zip the inner `auto-docs/` folder (the one containing `SKILL.md`)
 3. Go to **Settings → Capabilities → Skills**
 4. Click **Upload skill** and select that ZIP
-
-## Usage
-
-Open any project in Claude and say:
-
-```
-setup docs
-```
-
-Claude will analyze your project, detect the framework (Next.js, Express, NestJS, CLI, library, etc.), and generate structured Fumadocs documentation.
-
-```
-update docs
-```
-
-After making code changes, sync your docs.
-
-```
-add docs authentication
-```
-
-Generate a doc page for a specific feature or module.
-
-```
-preview docs
-```
-
-Spin up the Fumadocs dev server to see your docs rendered.
 
 ## Requirements
 
