@@ -55,9 +55,9 @@ One command. Detects project state and acts accordingly.
 
 1. Detect project root (directory containing `package.json` or `src/`)
 2. Detect project name from `package.json` → `name` field
-3. Copy `template/` from the skill directory into `.auto-docs/`:
+3. Copy `assets/template/` from the skill directory into `.auto-docs/`:
    ```bash
-   cp -r <skill-base-dir>/template <project-root>/.auto-docs
+   cp -r <skill-base-dir>/assets/template <project-root>/.auto-docs
    ```
    The skill base directory is shown at the top of every skill invocation (`Base directory for this skill: ...`).
 4. Patch `.auto-docs/lib/shared.ts` — replace `appName` with actual project name:
