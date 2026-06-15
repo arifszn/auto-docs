@@ -1,19 +1,19 @@
 ---
 name: auto-docs
 description: |
-  Generates and manages Fumadocs-powered documentation for existing coding projects.
+  Generates and manages documentation for existing coding projects.
   Use when user says "setup docs", "setup auto-docs", "preview docs", or asks to
   generate, create, update, or add pages to their project documentation.
 license: MIT
 compatibility: Requires Node.js 18+. Works with Claude Code and Claude.ai. Project must have a package.json or identifiable source directory.
 metadata:
   author: arifszn
-  version: 1.0.0
+  version: 2.0.0
 ---
 
 # auto-docs
 
-Generates and manages [Fumadocs](https://fumadocs.vercel.app)-powered documentation for existing coding projects.
+Generates and manages documentation for existing coding projects.
 
 `docs/` is a single site covering the **entire project**. There is no per-feature or per-module docs — everything lives together. `preview docs` shows the full site.
 
@@ -28,19 +28,12 @@ Generates and manages [Fumadocs](https://fumadocs.vercel.app)-powered documentat
 │   ├── getting-started.mdx
 │   └── <section>/
 │       └── index.mdx
-└── .auto-docs/                 # Fumadocs infra — tracked or gitignored per user choice
+└── .auto-docs/                 # docs infra — tracked or gitignored per user choice
     ├── package.json
-    ├── next.config.mjs
-    ├── source.config.ts        # dir: '../docs'
-    ├── tsconfig.json
+    ├── source.config.ts        # points to ../docs
     ├── app/
-    │   ├── layout.tsx
-    │   ├── docs/
-    │   │   ├── layout.tsx
-    │   │   └── [[...slug]]/
-    │   │       └── page.tsx
     └── lib/
-        └── source.ts
+        └── shared.ts           # patched with project name during setup
 ```
 
 ---
@@ -53,35 +46,30 @@ One command. Detects project state and acts accordingly.
 
 | State | `docs/` | `.auto-docs/` | Action |
 |-------|---------|---------------|--------|
-| Fresh project | ❌ | ❌ | Scaffold `.auto-docs/` → install deps → analyze codebase → generate `docs/` → ask gitignore |
-| Cloned, `.auto-docs/` tracked | ✅ | ✅ | `npm install` inside `.auto-docs/` only |
-| Cloned, `.auto-docs/` gitignored | ✅ | ❌ | Scaffold `.auto-docs/` → `npm install` → skip content gen |
+| Fresh project | ❌ | ❌ | Copy template → patch → install deps → analyze codebase → generate `docs/` → gitignore |
+| Cloned | ✅ | ❌ | Copy template → patch → install deps → skip content gen |
 | Weird state | ❌ | ✅ | Warn user: "`docs/` missing. Ask me to regenerate the docs." |
 
 #### Fresh Project Flow
 
 1. Detect project root (directory containing `package.json` or `src/`)
-2. Create `.auto-docs/` with all files from **File Templates** section
-3. Run `cd .auto-docs && npm install`
-4. Analyze codebase — see **Codebase Analysis** section
-5. Generate full `docs/` site — see **MDX Generation** section
-6. Ask user:
+2. Detect project name from `package.json` → `name` field
+3. Copy `template/` from the auto-docs repo into `.auto-docs/`:
+   ```bash
+   git clone https://github.com/arifszn/auto-docs /tmp/auto-docs-repo
+   cp -r /tmp/auto-docs-repo/template <project-root>/.auto-docs
+   rm -rf /tmp/auto-docs-repo
    ```
-   Track .auto-docs/ in git or gitignore it?
-
-   [1] Track  — teammates run 'setup docs' to install deps, infra stays in repo
-   [2] Ignore — smaller repo, teammates scaffold .auto-docs/ on first setup
+4. Patch `.auto-docs/lib/shared.ts` — replace `appName` with actual project name:
+   ```ts
+   export const appName = '<ProjectName>';  // replace with actual name
    ```
-7. Always append to `.gitignore` regardless of choice:
+5. Run `cd .auto-docs && npm install`
+6. Analyze codebase — see **Codebase Analysis** section
+7. Generate full `docs/` site — see **MDX Generation** section
+8. Append to `.gitignore`:
    ```gitignore
-   # auto-docs build artifacts
-   .auto-docs/node_modules
-   .auto-docs/.next
-   .auto-docs/.cache
-   ```
-8. If user picks **Ignore**, also append:
-   ```gitignore
-   # auto-docs infra (run 'setup docs' to regenerate)
+   # auto-docs
    .auto-docs/
    ```
 
@@ -93,7 +81,7 @@ One command. Detects project state and acts accordingly.
 cd .auto-docs && npm run dev
 ```
 
-Starts Fumadocs dev server at `http://localhost:3000/docs`. Shows the full project docs site.
+Dev server starts at `http://localhost:3000/docs`. Shows the full project docs site.
 
 ---
 
@@ -255,8 +243,6 @@ description: <what this covers>
 
 ### MDX Component Usage
 
-Use Fumadocs components where appropriate:
-
 ```mdx
 import { Callout } from 'fumadocs-ui/components/callout'
 import { Card, Cards } from 'fumadocs-ui/components/card'
@@ -277,187 +263,6 @@ import { Tab, Tabs } from 'fumadocs-ui/components/tabs'
 
 ---
 
-## File Templates
-
-### `.auto-docs/package.json`
-
-```json
-{
-  "name": "auto-docs",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
-  },
-  "dependencies": {
-    "fumadocs-ui": "latest",
-    "fumadocs-core": "latest",
-    "fumadocs-mdx": "latest",
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest"
-  },
-  "devDependencies": {
-    "@types/node": "latest",
-    "@types/react": "latest",
-    "typescript": "latest"
-  }
-}
-```
-
-### `.auto-docs/source.config.ts`
-
-```ts
-import { defineCollections, defineConfig } from 'fumadocs-mdx/config'
-
-export default defineConfig({})
-
-export const docs = defineCollections({
-  type: 'doc',
-  dir: '../docs',
-})
-```
-
-### `.auto-docs/next.config.mjs`
-
-```js
-import { createMDX } from 'fumadocs-mdx/next'
-
-const withMDX = createMDX()
-
-/** @type {import('next').NextConfig} */
-const config = {
-  reactStrictMode: true,
-}
-
-export default withMDX(config)
-```
-
-### `.auto-docs/tsconfig.json`
-
-```json
-{
-  "compilerOptions": {
-    "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "plugins": [{ "name": "next" }],
-    "paths": {
-      "@/*": ["./*"],
-      "@/.source": ["./.source"]
-    }
-  },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
-}
-```
-
-### `.auto-docs/app/layout.tsx`
-
-```tsx
-import { RootProvider } from 'fumadocs-ui/provider'
-import type { ReactNode } from 'react'
-import 'fumadocs-ui/style.css'
-
-export default function Layout({ children }: { children: ReactNode }) {
-  return (
-    <html lang="en">
-      <body>
-        <RootProvider>{children}</RootProvider>
-      </body>
-    </html>
-  )
-}
-```
-
-### `.auto-docs/app/docs/layout.tsx`
-
-```tsx
-import { DocsLayout } from 'fumadocs-ui/layouts/docs'
-import type { ReactNode } from 'react'
-import { source } from '@/lib/source'
-
-export default function Layout({ children }: { children: ReactNode }) {
-  return (
-    <DocsLayout tree={source.pageTree} nav={{ title: 'Docs' }}>
-      {children}
-    </DocsLayout>
-  )
-}
-```
-
-### `.auto-docs/app/docs/[[...slug]]/page.tsx`
-
-```tsx
-import { source } from '@/lib/source'
-import { DocsPage, DocsBody } from 'fumadocs-ui/page'
-import { notFound } from 'next/navigation'
-import defaultMdxComponents from 'fumadocs-ui/mdx'
-
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ slug?: string[] }>
-}) {
-  const { slug } = await params
-  const page = source.getPage(slug)
-  if (!page) notFound()
-
-  const MDX = page.data.body
-
-  return (
-    <DocsPage toc={page.data.toc}>
-      <DocsBody>
-        <h1>{page.data.title}</h1>
-        <MDX components={defaultMdxComponents} />
-      </DocsBody>
-    </DocsPage>
-  )
-}
-
-export async function generateStaticParams() {
-  return source.generateParams()
-}
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug?: string[] }>
-}) {
-  const { slug } = await params
-  const page = source.getPage(slug)
-  if (!page) notFound()
-  return { title: page.data.title }
-}
-```
-
-### `.auto-docs/lib/source.ts`
-
-```ts
-import { docs } from '@/.source'
-import { createMDXSource } from 'fumadocs-mdx'
-import { loader } from 'fumadocs-core/source'
-
-export const source = loader({
-  baseUrl: '/docs',
-  source: createMDXSource(docs),
-})
-```
-
----
-
 ## Troubleshooting
 
 **`npm install` fails**
@@ -470,10 +275,10 @@ export const source = loader({
 → Check filename matches entry in `docs/meta.json` exactly (no `.mdx` extension in meta.json)
 
 **MDX compilation error**
-→ Check for unclosed JSX tags, missing imports for Fumadocs components, or invalid frontmatter YAML
+→ Check for unclosed JSX tags, missing imports for components, or invalid frontmatter YAML
 
 **Dev server crash on start**
-→ Run `cd .auto-docs && npx next build` to surface full error with line numbers
+→ Run `cd .auto-docs && npm run build` to surface full error with line numbers
 
-**TypeScript errors on `@/.source`**
-→ Run `cd .auto-docs && npm run dev` once — Next.js generates `.source` types on first run
+**Types not resolving on first run**
+→ Run `cd .auto-docs && npm run dev` once — type definitions are generated on first startup
