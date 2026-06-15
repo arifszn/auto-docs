@@ -68,10 +68,10 @@ One command. Detects project state and acts accordingly.
 ### `preview docs`
 
 ```bash
-cd .auto-docs && npm run dev -- --port 4141
+cd .auto-docs && npm run dev
 ```
 
-Dev server starts at `http://localhost:4141/docs`. Shows the full project docs site.
+Dev server starts at `http://localhost:3000/docs` (auto-increments port if 3000 is taken). Shows the full project docs site.
 
 ---
 
