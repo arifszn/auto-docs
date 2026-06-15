@@ -77,7 +77,7 @@ One command. Detects project state and acts accordingly.
 cd .auto-docs && npm run dev
 ```
 
-Dev server starts at `http://localhost:3000/docs`. Shows the full project docs site.
+Dev server starts at `http://localhost:4141/docs`. Shows the full project docs site.
 
 ---
 
