@@ -28,7 +28,7 @@ Generates and manages documentation for existing coding projects.
 │   ├── getting-started.mdx
 │   └── <section>/
 │       └── index.mdx
-└── .auto-docs/                 # docs infra — tracked or gitignored per user choice
+└── .auto-docs/                 # docs infra — always gitignored
     ├── package.json
     ├── source.config.ts        # points to ../docs
     ├── app/
