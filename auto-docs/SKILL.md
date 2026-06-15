@@ -46,7 +46,7 @@ One command. Detects project state and acts accordingly.
 
 | State | `docs/` | `.auto-docs/` | Action |
 |-------|---------|---------------|--------|
-| Fresh project | ❌ | ❌ | Copy template → patch → install deps → analyze codebase → generate `docs/` → gitignore `.auto-docs/` |
+| Fresh project | ❌ | ❌ | Copy template → patch → install deps → analyze codebase → generate `docs/` |
 | Cloned, `.auto-docs/` present | ✅ | ✅ | `npm install` inside `.auto-docs/` only |
 | Cloned, `.auto-docs/` missing | ✅ | ❌ | Copy template → patch → install deps → skip content gen |
 | Weird state | ❌ | ✅ | Warn user: "`docs/` missing. Ask me to regenerate the docs." |
@@ -68,11 +68,6 @@ One command. Detects project state and acts accordingly.
 5. Run `cd .auto-docs && npm install`
 6. Analyze codebase — see **Codebase Analysis** section
 7. Generate full `docs/` site — see **MDX Generation** section
-8. Append to `.gitignore`:
-   ```gitignore
-   # auto-docs
-   .auto-docs/
-   ```
 
 ---
 
