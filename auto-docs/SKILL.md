@@ -8,7 +8,7 @@ license: MIT
 compatibility: Requires Node.js 18+.
 metadata:
   author: arifszn
-  version: 2.1.0
+  version: 2.2.0
 ---
 
 # auto-docs
