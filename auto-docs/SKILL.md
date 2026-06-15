@@ -46,8 +46,9 @@ One command. Detects project state and acts accordingly.
 
 | State | `docs/` | `.auto-docs/` | Action |
 |-------|---------|---------------|--------|
-| Fresh project | ❌ | ❌ | Copy template → patch → install deps → analyze codebase → generate `docs/` → gitignore |
-| Cloned | ✅ | ❌ | Copy template → patch → install deps → skip content gen |
+| Fresh project | ❌ | ❌ | Copy template → patch → install deps → analyze codebase → generate `docs/` → gitignore `.auto-docs/` |
+| Cloned, `.auto-docs/` present | ✅ | ✅ | `npm install` inside `.auto-docs/` only |
+| Cloned, `.auto-docs/` missing | ✅ | ❌ | Copy template → patch → install deps → skip content gen |
 | Weird state | ❌ | ✅ | Warn user: "`docs/` missing. Ask me to regenerate the docs." |
 
 #### Fresh Project Flow
