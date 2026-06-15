@@ -4,8 +4,10 @@ description: |
   Generates and manages Fumadocs-powered documentation for existing coding projects.
   Use when user says "setup docs", "setup auto-docs", "update docs", "add docs [topic]",
   "preview docs", or asks to generate, create, or update documentation for their project.
+license: MIT
+compatibility: Requires Node.js 18+. Works with Claude Code and Claude.ai. Project must have a package.json or identifiable source directory.
 metadata:
-  author: auto-docs
+  author: arifszn
   version: 1.0.0
 ---
 

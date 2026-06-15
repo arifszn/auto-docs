@@ -39,15 +39,17 @@ On first run it asks whether to track `.auto-docs/` in git or gitignore it.
 ### Claude Code
 
 ```bash
-# Clone into your Claude skills directory
-git clone https://github.com/arifszn/auto-docs ~/.claude/skills/auto-docs
+git clone https://github.com/arifszn/auto-docs /tmp/auto-docs-repo
+cp -r /tmp/auto-docs-repo/auto-docs ~/.claude/skills/auto-docs
+rm -rf /tmp/auto-docs-repo
 ```
 
 ### Claude.ai
 
-1. Download this repo as a ZIP
-2. Go to **Settings → Capabilities → Skills**
-3. Click **Upload skill** and select the ZIP
+1. Download this repo as a ZIP and extract it
+2. Zip the inner `auto-docs/` folder (the one containing `SKILL.md`)
+3. Go to **Settings → Capabilities → Skills**
+4. Click **Upload skill** and select that ZIP
 
 ## Usage
 
