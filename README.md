@@ -7,6 +7,7 @@ An agent skill that generate beautiful documentation for your project.
 ### Claude Code (Plugin Marketplace)
 
 ```bash
+/plugin marketplace add arifszn/auto-docs
 /plugin install auto-docs
 ```
 
