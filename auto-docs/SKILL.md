@@ -239,11 +239,11 @@ description: <what this covers>
 
 ### MDX Component Usage
 
-```mdx
-import { Callout } from 'fumadocs-ui/components/callout'
-import { Card, Cards } from 'fumadocs-ui/components/card'
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs'
+MDX files must NOT use import statements — they live outside `.auto-docs/` and cannot resolve `fumadocs-ui` modules directly. All components are pre-registered globally in `.auto-docs/components/mdx.tsx`.
 
+**Pre-registered (use directly in any MDX file):**
+
+```mdx
 <Callout type="warn">Important warning here</Callout>
 
 <Cards>
@@ -256,6 +256,23 @@ import { Tab, Tabs } from 'fumadocs-ui/components/tabs'
   <Tab value="yarn">yarn add</Tab>
 </Tabs>
 ```
+
+**Need a component not in the list?** Add it to `.auto-docs/components/mdx.tsx` first:
+
+```ts
+import { Steps, Step } from 'fumadocs-ui/components/steps';
+
+export function getMDXComponents(components?: MDXComponents) {
+  return {
+    ...defaultMdxComponents,
+    Callout, Card, Cards, Tab, Tabs,
+    Steps, Step,  // add here
+    ...components,
+  } satisfies MDXComponents;
+}
+```
+
+Then use in MDX without any import.
 
 ---
 
