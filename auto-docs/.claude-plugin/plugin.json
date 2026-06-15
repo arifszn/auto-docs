@@ -1,0 +1,10 @@
+{
+  "name": "auto-docs",
+  "description": "Generates and manages documentation for existing coding projects. Say 'setup docs' to scaffold a full docs site from your codebase.",
+  "version": "2.0.0",
+  "license": "MIT",
+  "author": {
+    "name": "arifszn"
+  },
+  "repository": "https://github.com/arifszn/auto-docs"
+}
