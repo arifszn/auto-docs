@@ -259,24 +259,117 @@ description: <what this covers>
 
 ## Usage
 
-<code example>
+<Tabs items={['npm', 'pnpm', 'yarn']}>
+  <Tab value="npm">
+    ```bash
+    <install or run command>
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash
+    <pnpm variant>
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    <yarn variant>
+    ```
+  </Tab>
+</Tabs>
+
+<code example showing primary usage>
 
 <Callout type="warn">
-  <any important caveat or gotcha>
+  <any important caveat or gotcha — omit if none>
 </Callout>
 
-## API Reference
+## Configuration
 
-<key functions, props, or endpoints>
+<TypeTable
+  type={{
+    <option>: {
+      description: '<what it controls>',
+      type: '<type>',
+      default: '<default value>',
+    },
+  }}
+/>
+
+## FAQ
+
+<Accordions>
+  <Accordion title="<Common question 1>">
+    <Answer with code if needed>
+  </Accordion>
+  <Accordion title="<Common question 2>">
+    <Answer>
+  </Accordion>
+</Accordions>
 ```
+
+Omit sections that don't apply (e.g., no config options → skip TypeTable; no FAQs → skip Accordions). Never generate empty sections.
 
 ### MDX Component Usage
 
-MDX files must NOT use import statements — they live outside `.auto-docs/` and cannot resolve `fumadocs-ui` modules directly.
+MDX files must NOT use import statements — they live outside `.auto-docs/` and cannot resolve `fumadocs-ui` modules directly. All components are globally available in MDX, no imports needed.
 
-**You decide** which fumadocs components and features best suit the content. Use whatever makes the docs clearest — components are globally available in MDX, no imports needed.
+**Registered components** (always available):
 
-> **Important:** Before using any component, verify it is registered in `.auto-docs/components/mdx.tsx`. If not, add it there first.
+| Component | Import path | Use for |
+|-----------|-------------|---------|
+| `<Callout>` | callout | Warnings, tips, important notes |
+| `<Card>` / `<Cards>` | card | Feature grids, link collections |
+| `<Tab>` / `<Tabs>` | tabs | Package manager variants, platform options |
+| `<Step>` / `<Steps>` | steps | Sequential install or setup flows |
+| `<Accordion>` / `<Accordions>` | accordion | FAQs, collapsible details, troubleshooting |
+| `<TypeTable>` | type-table | API parameters, props, config options |
+
+> **Adding new components:** Register in `.auto-docs/components/mdx.tsx` before using in MDX.
+
+### Beautiful Docs Principles
+
+- **Lead with purpose** — every page opens with one sentence stating what it covers
+- **Show, don't tell** — prefer code examples over prose descriptions
+- **Use components intentionally** — `<Steps>` for flows, `<TypeTable>` for params, `<Accordions>` for FAQs, `<Callout type="warn">` for gotchas
+- **Tab package manager commands** — always offer npm/pnpm/yarn variants with `<Tabs>`
+- **One callout per page max** — overuse dilutes attention
+- **API reference = TypeTable** — never use markdown tables for API params; use `<TypeTable>` for type-safe, scannable reference
+
+### `<TypeTable>` usage
+
+```mdx
+<TypeTable
+  type={{
+    timeout: {
+      description: 'Request timeout in milliseconds',
+      type: 'number',
+      default: '5000',
+    },
+    retries: {
+      description: 'Number of retry attempts on failure',
+      type: 'number',
+      default: '3',
+    },
+    onError: {
+      description: 'Callback fired when a request fails',
+      type: '(error: Error) => void',
+    },
+  }}
+/>
+```
+
+### `<Accordions>` usage
+
+```mdx
+<Accordions>
+  <Accordion title="Why does X happen?">
+    Explanation here.
+  </Accordion>
+  <Accordion title="How do I configure Y?">
+    Steps or code here.
+  </Accordion>
+</Accordions>
+```
 
 ---
 

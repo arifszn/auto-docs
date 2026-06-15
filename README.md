@@ -1,46 +1,16 @@
 # auto-docs
 
-An agent skill that generates and manages documentation for existing coding projects.
-
-## What it does
-
-Say `setup docs` — auto-docs analyzes your codebase, scaffolds a docs site, and generates content covering your entire project. Preview it at `http://localhost:4141/docs`.
-
-**Two folders, clean separation:**
-
-```
-your-project/
-├── src/                  # your code
-├── docs/                 # MDX content — yours to edit, always git tracked
-└── .auto-docs/           # docs infra — gitignored by default
-```
-
-## Commands
-
-| What you say | What happens |
-|-------------|-------------|
-| `setup docs` | Detects project state, scaffolds infra if needed, generates docs |
-| `preview docs` | Starts dev server at `http://localhost:4141/docs` |
-
-Everything else is natural language:
-
-- "add a doc about authentication"
-- "create a new doc for the payments flow"
-- "update the getting-started doc"
-- "my API changed, update the docs"
-- "add a rate limiting section to the API doc"
-
-## `setup docs` is smart
-
-Detects your state automatically:
-
-- **Fresh project** → copies bundled template, installs deps, analyzes codebase, generates `docs/`
-- **Cloned, `.auto-docs/` present** → runs `npm install` only
-- **Cloned, `.auto-docs/` missing** → copies template, installs deps, leaves `docs/` untouched
+An agent skill that generate beautiful documentation for your project. 
 
 ## Installation
 
-### Claude Code
+### Claude Code (Plugin Marketplace)
+
+```bash
+/plugin install auto-docs
+```
+
+### Claude Code (Manual)
 
 ```bash
 git clone https://github.com/arifszn/auto-docs /tmp/auto-docs-repo
@@ -48,18 +18,59 @@ cp -r /tmp/auto-docs-repo/auto-docs ~/.claude/skills/auto-docs
 rm -rf /tmp/auto-docs-repo
 ```
 
-### Other Coding Agents
+### Other coding agents
 
-Agents such as Codex, Kimi Code, OpenCode, Gemini CLI, or other local coding assistants can use the same core skill. The simplest path is to send the agent this GitHub repo link and ask it to copy the auto-docs skill to the relevant path:
+Claude Code, Codex, Kimi Code, OpenCode, Gemini CLI, and similar agents all work. Send your agent this link and ask it to install the skill:
 
 ```
 https://github.com/arifszn/auto-docs
 ```
 
+## Usage
+
+### Generate docs
+
+```
+setup docs
+```
+
+Reads your project, builds the doc site engine in `.auto-docs/`, and writes the initial `docs/` content based on what it finds.
+
+### Preview
+
+```
+preview docs
+```
+
+Starts the dev server at `http://localhost:3000/docs`.
+
+### Edit docs
+
+Describe what you want in plain English. auto-docs handles the files.
+
+| Say this | What happens |
+|----------|-------------|
+| `add a doc about authentication` | Creates `docs/authentication.mdx`, updates navigation |
+| `add a rate limiting section to the API doc` | Appends the section to the existing page |
+| `update the getting-started doc` | Edits the page in place |
+| `my API changed, update the docs` | Diffs git, finds affected pages, updates them |
+| `remove the legacy section from configuration` | Locates and removes the section |
+
+## What gets generated
+
+```
+docs/
+├── index.mdx            
+├── meta.json            
+└── <section>/
+    └── index.mdx        
+```
+
 ## Requirements
 
 - Node.js 18+
+- Claude Code or compatible coding agent
 
 ## License
 
-MIT
+[MIT](./LICENSE)
