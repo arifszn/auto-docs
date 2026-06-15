@@ -1,10 +1,10 @@
 # auto-docs
 
-A Claude skill that generates and manages [Fumadocs](https://fumadocs.vercel.app)-powered documentation for existing coding projects.
+A Claude skill that generates and manages documentation for existing coding projects.
 
 ## What it does
 
-Say `setup docs` — auto-docs analyzes your codebase, scaffolds a Fumadocs site, and generates a complete documentation site covering your entire project.
+Say `setup docs` — auto-docs analyzes your codebase, scaffolds a docs site, and generates content covering your entire project. Preview it at `http://localhost:4141/docs`.
 
 **Two folders, clean separation:**
 
@@ -12,15 +12,15 @@ Say `setup docs` — auto-docs analyzes your codebase, scaffolds a Fumadocs site
 your-project/
 ├── src/                  # your code
 ├── docs/                 # MDX content — yours to edit, always git tracked
-└── .auto-docs/           # Fumadocs infra — generated, rarely touched
+└── .auto-docs/           # docs infra — gitignored by default
 ```
 
 ## Commands
 
 | What you say | What happens |
 |-------------|-------------|
-| `setup docs` | Detects project state, scaffolds infra if needed, generates full docs site |
-| `preview docs` | Starts Fumadocs dev server at `http://localhost:3000/docs` |
+| `setup docs` | Detects project state, scaffolds infra if needed, generates docs |
+| `preview docs` | Starts dev server at `http://localhost:4141/docs` |
 
 Everything else is natural language:
 
@@ -34,11 +34,9 @@ Everything else is natural language:
 
 Detects your state automatically:
 
-- **Fresh project** → scaffolds `.auto-docs/`, installs deps, analyzes codebase, generates `docs/`
-- **Cloned with `.auto-docs/` tracked** → runs `npm install` only
-- **Cloned without `.auto-docs/`** → scaffolds infra, installs deps, leaves `docs/` untouched
-
-On first run it asks whether to track `.auto-docs/` in git or gitignore it.
+- **Fresh project** → copies bundled template, installs deps, analyzes codebase, generates `docs/`
+- **Cloned, `.auto-docs/` present** → runs `npm install` only
+- **Cloned, `.auto-docs/` missing** → copies template, installs deps, leaves `docs/` untouched
 
 ## Installation
 
