@@ -3,7 +3,7 @@ name: auto-docs
 description: |
   Generates and manages documentation for existing coding projects.
   Use when user says "setup docs", "setup auto-docs", "preview docs", or asks to
-  generate, create, update, or add pages to their project documentation.
+  generate, create, update, or add docs to their project documentation.
 license: MIT
 compatibility: Requires Node.js 18+. Works with Claude Code and Claude.ai. Project must have a package.json or identifiable source directory.
 metadata:
@@ -88,17 +88,17 @@ Examples of what users might say — and what to do:
 
 | User says | Action |
 |-----------|--------|
-| "add a page about authentication" | Create `docs/authentication.mdx`, add to `docs/meta.json` |
-| "create a new page for the payments flow" | Create `docs/payments.mdx`, add to `docs/meta.json` |
-| "update the getting-started page" | Read `docs/getting-started.mdx`, edit in place |
-| "my API changed, update the docs" | `git diff --name-only HEAD` → identify affected pages → update them |
-| "add a rate limiting section to the API page" | Read relevant MDX file, append section |
+| "add a doc about authentication" | Create `docs/authentication.mdx`, add to `docs/meta.json` |
+| "create a new doc for the payments flow" | Create `docs/payments.mdx`, add to `docs/meta.json` |
+| "update the getting-started doc" | Read `docs/getting-started.mdx`, edit in place |
+| "my API changed, update the docs" | `git diff --name-only HEAD` → identify affected docs → update them |
+| "add a rate limiting section to the API doc" | Read relevant MDX file, append section |
 | "remove the legacy section from configuration" | Read file, remove that section |
 
 **Always before editing:**
 1. Read the existing MDX file if it exists
 2. Identify which `docs/meta.json` entries are affected
-3. Update `docs/meta.json` if pages are added or removed
+3. Update `docs/meta.json` if docs are added or removed
 
 ---
 

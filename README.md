@@ -24,11 +24,11 @@ your-project/
 
 Everything else is natural language:
 
-- "add a page about authentication"
-- "create a new page for the payments flow"
-- "update the getting-started page"
+- "add a doc about authentication"
+- "create a new doc for the payments flow"
+- "update the getting-started doc"
 - "my API changed, update the docs"
-- "add a rate limiting section to the API page"
+- "add a rate limiting section to the API doc"
 
 ## `setup docs` is smart
 
