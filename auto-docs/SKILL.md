@@ -71,7 +71,7 @@ One command. Detects project state and acts accordingly.
 cd .auto-docs && npm run dev
 ```
 
-Dev server starts at `http://localhost:3000/docs` (auto-increments port if 3000 is taken). Shows the full project docs site.
+Dev server starts at `http://localhost:4141/docs`. If 4141 is taken, auto-increments to 4142, 4143, etc. Port printed in terminal on start.
 
 ---
 
