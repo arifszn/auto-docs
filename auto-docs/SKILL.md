@@ -161,19 +161,41 @@ title: Overview
 description: <from README or description>
 ---
 
-## Overview
-
 <2-3 sentence project summary>
 
 ## Features
 
-- <key feature 1>
-- <key feature 2>
-- <key feature 3>
+<Cards>
+  <Card title="<Feature 1>" href="/docs/<section>">
+    <short description>
+  </Card>
+  <Card title="<Feature 2>" href="/docs/<section>">
+    <short description>
+  </Card>
+</Cards>
 
 ## Quick Start
 
-<minimal working example from README or inferred from codebase>
+<Tabs items={['npm', 'pnpm', 'yarn']}>
+  <Tab value="npm">
+    ```bash
+    npm install
+    npm run dev
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash
+    pnpm install
+    pnpm dev
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn install
+    yarn dev
+    ```
+  </Tab>
+</Tabs>
 ```
 
 ### `docs/getting-started.mdx`
@@ -186,19 +208,43 @@ description: Install and run the project
 
 ## Prerequisites
 
-<Node version, required tools, etc.>
+<Callout type="info">
+  Requires <Node version, required tools, etc.>
+</Callout>
 
 ## Installation
 
-<detected package manager install command>
+<Steps>
+  <Step>
+    ### Clone the repository
 
-## Configuration
+    ```bash
+    git clone <repo-url>
+    cd <project>
+    ```
+  </Step>
+  <Step>
+    ### Install dependencies
 
-<env vars, config files if detected>
+    <Tabs items={['npm', 'pnpm', 'yarn']}>
+      <Tab value="npm">```bash npm install ```</Tab>
+      <Tab value="pnpm">```bash pnpm install ```</Tab>
+      <Tab value="yarn">```bash yarn install ```</Tab>
+    </Tabs>
+  </Step>
+  <Step>
+    ### Configure environment
 
-## First Run
+    <env vars, config files if detected — use Callout for required vars>
+  </Step>
+  <Step>
+    ### Start the app
 
-<start/dev command from package.json scripts>
+    ```bash
+    <start/dev command from package.json scripts>
+    ```
+  </Step>
+</Steps>
 ```
 
 ### `docs/<section>/index.mdx`
@@ -209,13 +255,15 @@ title: <SectionName>
 description: <what this covers>
 ---
 
-## Overview
-
-<what this section covers>
+<what this section covers — 1-2 sentences>
 
 ## Usage
 
 <code example>
+
+<Callout type="warn">
+  <any important caveat or gotcha>
+</Callout>
 
 ## API Reference
 
@@ -224,40 +272,11 @@ description: <what this covers>
 
 ### MDX Component Usage
 
-MDX files must NOT use import statements — they live outside `.auto-docs/` and cannot resolve `fumadocs-ui` modules directly. All components are pre-registered globally in `.auto-docs/components/mdx.tsx`.
+MDX files must NOT use import statements — they live outside `.auto-docs/` and cannot resolve `fumadocs-ui` modules directly.
 
-**Pre-registered (use directly in any MDX file):**
+**You decide** which fumadocs components and features best suit the content. Use whatever makes the docs clearest — components are globally available in MDX, no imports needed.
 
-```mdx
-<Callout type="warn">Important warning here</Callout>
-
-<Cards>
-  <Card title="Feature A" href="/docs/feature-a">Description</Card>
-</Cards>
-
-<Tabs items={['npm', 'pnpm', 'yarn']}>
-  <Tab value="npm">npm install</Tab>
-  <Tab value="pnpm">pnpm add</Tab>
-  <Tab value="yarn">yarn add</Tab>
-</Tabs>
-```
-
-**Need a component not in the list?** Add it to `.auto-docs/components/mdx.tsx` first:
-
-```ts
-import { Steps, Step } from 'fumadocs-ui/components/steps';
-
-export function getMDXComponents(components?: MDXComponents) {
-  return {
-    ...defaultMdxComponents,
-    Callout, Card, Cards, Tab, Tabs,
-    Steps, Step,  // add here
-    ...components,
-  } satisfies MDXComponents;
-}
-```
-
-Then use in MDX without any import.
+> **Important:** Before using any component, verify it is registered in `.auto-docs/components/mdx.tsx`. If not, add it there first.
 
 ---
 
