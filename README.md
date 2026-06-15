@@ -1,6 +1,6 @@
 # auto-docs
 
-A Claude skill that generates and manages documentation for existing coding projects.
+An agent skill that generates and manages documentation for existing coding projects.
 
 ## What it does
 
@@ -48,12 +48,13 @@ cp -r /tmp/auto-docs-repo/auto-docs ~/.claude/skills/auto-docs
 rm -rf /tmp/auto-docs-repo
 ```
 
-### Claude.ai
+### Other Coding Agents
 
-1. Download this repo as a ZIP and extract it
-2. Zip the inner `auto-docs/` folder (the one containing `SKILL.md`)
-3. Go to **Settings → Capabilities → Skills**
-4. Click **Upload skill** and select that ZIP
+Agents such as Codex, Kimi Code, OpenCode, Gemini CLI, or other local coding assistants can use the same core skill. The simplest path is to send the agent this GitHub repo link and ask it to copy the auto-docs skill to the relevant path:
+
+```
+https://github.com/arifszn/auto-docs
+```
 
 ## Requirements
 
