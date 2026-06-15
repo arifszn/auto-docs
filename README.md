@@ -58,7 +58,6 @@ rm -rf /tmp/auto-docs-repo
 ## Requirements
 
 - Node.js 18+
-- Claude Code or Claude.ai with Skills enabled
 
 ## License
 

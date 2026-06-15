@@ -5,7 +5,7 @@ description: |
   Use when user says "setup docs", "setup auto-docs", "preview docs", or asks to
   generate, create, update, or add docs to their project documentation.
 license: MIT
-compatibility: Requires Node.js 18+. Works with Claude Code and Claude.ai. Project must have a package.json or identifiable source directory.
+compatibility: Requires Node.js 18+.
 metadata:
   author: arifszn
   version: 2.0.0
@@ -28,12 +28,12 @@ Generates and manages documentation for existing coding projects.
 │   ├── getting-started.mdx
 │   └── <section>/
 │       └── index.mdx
-└── .auto-docs/                 # docs infra — gitignored by default
+└── .auto-docs/                 # docs infra
     ├── package.json
     ├── source.config.ts        # points to ../docs
     ├── app/
     └── lib/
-        └── shared.ts           # patched with project name during setup
+        └── shared.ts
 ```
 
 ---
@@ -53,20 +53,15 @@ One command. Detects project state and acts accordingly.
 
 #### Fresh Project Flow
 
-1. Detect project root (directory containing `package.json` or `src/`)
-2. Detect project name from `package.json` → `name` field
-3. Copy `assets/template/` from the skill directory into `.auto-docs/`:
+1. Detect project root
+2. Copy `assets/template/` from the skill directory into `.auto-docs/`:
    ```bash
    cp -r <skill-base-dir>/assets/template <project-root>/.auto-docs
    ```
    The skill base directory is shown at the top of every skill invocation (`Base directory for this skill: ...`).
-4. Patch `.auto-docs/lib/shared.ts` — replace `appName` with actual project name:
-   ```ts
-   export const appName = '<ProjectName>';  // replace with actual name
-   ```
-5. Run `cd .auto-docs && npm install`
-6. Analyze codebase — see **Codebase Analysis** section
-7. Generate full `docs/` site — see **MDX Generation** section
+4. Run `cd .auto-docs && npm install`
+5. Analyze codebase — see **Codebase Analysis** section
+6. Generate full `docs/` site — see **MDX Generation** section
 
 ---
 
@@ -106,11 +101,11 @@ Examples of what users might say — and what to do:
 
 Run during `setup docs` on a fresh project to understand what to document.
 
-**Step 1 — Read `package.json`:**
-- Project name and description
-- Framework: Next.js, Express, NestJS, Fastify, Vite, etc.
-- Language: TypeScript or JavaScript
-- Key dependencies that shape doc structure
+**Step 1 — Identify Project Type:**
+- Check for `package.json`, `pyproject.toml`, `go.mod`, `Cargo.toml`, or similar config files if they exist.
+- Determine language (e.g., TypeScript, Python, Go, Rust) and framework.
+- Identify key dependencies that shape doc structure.
+- Extract project description.
 
 **Step 2 — Read `README.md`:**
 - Project purpose and overview
@@ -118,20 +113,11 @@ Run during `setup docs` on a fresh project to understand what to document.
 - Usage examples and feature list
 
 **Step 3 — Scan source directory:**
-- Top-level modules under `src/`, `app/`, `lib/`, `packages/`
-- Route files, controller files, exported functions
-- Config files (`.env.example`, config schemas)
+- Top-level modules under `src/`, `app/`, `lib/`, `packages/`, or the root directory.
+- Route files, controller files, exported functions.
+- Config files (`.env.example`, config schemas).
 
-**Step 4 — Detect project type, adapt doc structure:**
-
-| Project Type | Detection | Doc Structure |
-|-------------|-----------|---------------|
-| Next.js app | `next` in deps | pages, API routes, components |
-| Express/Fastify | `express`/`fastify` in deps | routes, middleware, controllers |
-| NestJS | `@nestjs/core` in deps | modules, controllers, services |
-| Library/SDK | `main`/`exports` in package.json, no framework | public API, exports, types |
-| CLI tool | `bin` field in package.json | commands, flags, config |
-| Monorepo | `workspaces` in package.json or `packages/` dir | per-package sections |
+Use these findings to dynamically adapt the documentation structure for the project.
 
 ---
 
@@ -141,7 +127,7 @@ Run during `setup docs` on a fresh project to understand what to document.
 
 ```json
 {
-  "title": "<ProjectName>",
+  "title": "Docs",
   "pages": [
     "index",
     "getting-started",
@@ -154,7 +140,7 @@ Run during `setup docs` on a fresh project to understand what to document.
 For nested sections:
 ```json
 {
-  "title": "<ProjectName>",
+  "title": "Docs",
   "pages": [
     "index",
     "getting-started",
@@ -171,8 +157,8 @@ For nested sections:
 
 ```mdx
 ---
-title: <ProjectName>
-description: <from README or package.json description>
+title: Overview
+description: <from README or description>
 ---
 
 ## Overview
@@ -195,7 +181,7 @@ description: <from README or package.json description>
 ```mdx
 ---
 title: Getting Started
-description: Install and run <ProjectName>
+description: Install and run the project
 ---
 
 ## Prerequisites
